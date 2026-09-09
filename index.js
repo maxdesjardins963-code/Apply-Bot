@@ -17,6 +17,7 @@
 require('dotenv').config();
 const fs = require('fs');
 const path = require('path');
+const http = require('http');
 const {
   Client,
   GatewayIntentBits,
@@ -599,3 +600,22 @@ client.on('messageCreate', async (message) => {
 });
 
 client.login(TOKEN);
+
+// ============================================================
+// FAKE HTTP SERVER
+// ------------------------------------------------------------
+// Discord bots don't need a web server, but Render's "Web Service"
+// plan expects something to be listening on a port. This tiny
+// server just answers "OK" so Render's port check passes. If you
+// deploy this as a "Background Worker" on Render instead, this
+// block is harmless and simply won't be checked.
+// ============================================================
+const PORT = process.env.PORT || 3000;
+http
+  .createServer((req, res) => {
+    res.writeHead(200, { 'Content-Type': 'text/plain' });
+    res.end('Bot is running.');
+  })
+  .listen(PORT, () => {
+    console.log(`Fake HTTP server listening on port ${PORT} (for Render's port check)`);
+  });
