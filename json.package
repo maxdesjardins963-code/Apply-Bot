@@ -1,0 +1,17 @@
+{
+  "name": "af-ptfs-appy",
+  "version": "1.0.0",
+  "description": "Application bot (Appy clone) for the Air France | PTFS Discord server - handles ATC, Moderator, Cabin Crew and Pilot applications via DM.",
+  "main": "index.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "discord.js": "^14.16.3",
+    "dotenv": "^16.4.5"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
