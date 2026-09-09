@@ -569,12 +569,67 @@ client.on('messageCreate', async (message) => {
   const args = message.content.slice(PREFIX.length).trim().split(/\s+/);
   const command = args.shift().toLowerCase();
 
+  // ---- Anyone can post the panel now ----
   if (command === 'panel') {
-    if (!isStaff(message.member)) {
-      return message.reply("You don't have permission to do that.");
-    }
     await message.channel.send({ embeds: [buildPanelEmbed()], components: [buildPanelRow()] });
     return;
+  }
+
+  // ---- Bot latency check ----
+  if (command === 'ping') {
+    const sent = await message.reply('Pinging...');
+    const latency = sent.createdTimestamp - message.createdTimestamp;
+    return sent.edit(`🏓 Pong! Latency: ${latency}ms | API: ${Math.round(client.ws.ping)}ms`);
+  }
+
+  // ---- Info embed about the bot ----
+  if (command === 'about') {
+    const embed = new EmbedBuilder()
+      .setTitle('AF | PTFS Apply Bot')
+      .setDescription(
+        'I handle applications for **ATC**, **Moderator**, **Cabin Crew** and **Pilot** positions.\n' +
+          'Type `!panel` to post the application panel, or `!help` to see everything I can do.'
+      )
+      .addFields(
+        { name: 'Departments', value: Object.values(DEPARTMENTS).map((d) => d.label).join('\n') },
+        { name: 'Minimum age', value: `${MIN_AGE}+` }
+      )
+      .setColor(0x2b2d31)
+      .setFooter({ text: BRAND_FOOTER });
+    return message.channel.send({ embeds: [embed] });
+  }
+
+  // ---- Check your own application status ----
+  if (command === 'myapp') {
+    const session = sessions.get(message.author.id);
+    if (!session) {
+      return message.reply(
+        isBlacklisted(message.author.id)
+          ? "You don't have an active application, and you're currently blacklisted from applying."
+          : "You don't have an application in progress. Click a button on the panel to start one!"
+      );
+    }
+    const list = getFullQuestionList(session.deptKey);
+    return message.reply(
+      `You're applying for **${DEPARTMENTS[session.deptKey].label}** - question ${session.step + 1}/${list.length}. Check your DMs to keep answering, or click "Cancel Application" there to stop.`
+    );
+  }
+
+  // ---- List available commands ----
+  if (command === 'help') {
+    const embed = new EmbedBuilder()
+      .setTitle('Commands')
+      .setColor(0x2b2d31)
+      .addFields(
+        { name: '!panel', value: 'Post the application panel (ATC / Moderator / Cabin Crew / Pilot buttons).' },
+        { name: '!myapp', value: 'Check the status of your own in-progress application.' },
+        { name: '!ping', value: "Check the bot's latency." },
+        { name: '!about', value: 'Info about this bot.' },
+        { name: '!blacklist', value: '*(staff only)* List everyone who is blacklisted and why.' },
+        { name: '!unblacklist <userId or @mention>', value: '*(staff only)* Remove someone from the blacklist.' }
+      )
+      .setFooter({ text: BRAND_FOOTER });
+    return message.channel.send({ embeds: [embed] });
   }
 
   if (command === 'blacklist') {
