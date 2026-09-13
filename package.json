@@ -1,17 +1,27 @@
 {
-  "name": "af-ptfs-appy",
+  "name": "westjet-ptfs-apply-bot",
   "version": "1.0.0",
-  "description": "Application bot (Appy clone) for the Air France | PTFS Discord server - handles ATC, Moderator, Cabin Crew and Pilot applications via DM.",
+  "description": "Appy-style Discord application bot for WestJet | PTFS (ATC, Moderator, Cabin Crew, Pilot), with built-in DM answer moderation and age-based auto-blacklist.",
   "main": "index.js",
   "type": "commonjs",
-  "scripts": {
-    "start": "node index.js"
+  "engines": {
+    "node": ">=18.0.0"
   },
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js"
+  },
+  "keywords": [
+    "discord",
+    "discord.js",
+    "ptfs",
+    "westjet",
+    "application-bot",
+    "roblox"
+  ],
+  "license": "MIT",
   "dependencies": {
     "discord.js": "^14.16.3",
     "dotenv": "^16.4.5"
-  },
-  "engines": {
-    "node": ">=18.0.0"
   }
 }
